@@ -4,10 +4,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
-data class AState(val name: String): State
+data class AMvState(val name: String): MvState
 
 
-class AStore: StateProducer<AState> by stateProducer(AState("")) {
+class AStore: StateProducer<AMvState> by stateProducer(AMvState("")) {
 
     fun updateName(name: String) {
         update {
@@ -35,13 +35,13 @@ class AView {
 
         // collect property
         scope.launch {
-            aStore.onUpdate(AState::name) {
+            aStore.onUpdate(AMvState::name) {
 
             }
         }
 
         scope.launch {
-            aStore.onUpdate(AState::name, ::onNameChange)
+            aStore.onUpdate(AMvState::name, ::onNameChange)
         }
     }
 
@@ -50,9 +50,9 @@ class AView {
     }
 }
 
-data class BState(val b: String): State
+data class BMvState(val b: String): MvState
 
-class BStore: StateProducer<BState> by stateProducer(BState("")) {
+class BStore: StateProducer<BMvState> by stateProducer(BMvState("")) {
     private val aStore = AStore()
 
     fun updateB(b: String) {
