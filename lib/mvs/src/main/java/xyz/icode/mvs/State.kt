@@ -21,4 +21,4 @@ interface StateProducer<T: State> {
     suspend fun<V> onUpdate(property: KProperty1<T, V>, observer: suspend (V) -> Unit)
 }
 
-fun <T: State> stateProducer(initState: T): StateProducer<T> = StateStoreImpl(initState)
+fun <T: State> stateProducer(initState: T): StateProducer<T> = StateProducerImpl(initState)

@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.map
 import kotlin.reflect.KProperty1
 
 
-internal class StateStoreImpl<T: State>(initState: T) : StateProducer<T> {
+internal class StateProducerImpl<T: State>(initState: T) : StateProducer<T> {
     private val stateFlow = MutableStateFlow(initState)
 
     override val state: StateFlow<T> = stateFlow.asStateFlow()
