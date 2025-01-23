@@ -1,5 +1,8 @@
 package xyz.icode.mvs
 
+import kotlinx.coroutines.CoroutineScope
+import kotlin.reflect.KClass
+
 /**
  * Module 对应 一个业务逻辑，
  * Module = UI + State + Logic
@@ -10,5 +13,8 @@ package xyz.icode.mvs
  *  AppleLoginModule = AppleLoginUI + AppleLoginState + AppleLoginLogic
  */
 
-interface MvStateModule {
-}
+data class MvStateModule(
+    val scope : CoroutineScope,
+)
+
+fun<S: MvState, T: MvLogic<S>> MvStateModule.logicOf(clazz: KClass<T>): T = TODO()

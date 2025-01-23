@@ -1,4 +1,4 @@
-package xyz.icode.mvs
+package xyz.icode.mvs.internal
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.currentCoroutineContext
@@ -6,14 +6,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import xyz.icode.mvs.MvLogic
+import xyz.icode.mvs.MvState
 import kotlin.reflect.KProperty1
 
-internal class StateLogicImpl<T : MvState>(initState: T) : StateLogic<T> {
+internal class MvLogicImpl<T : MvState>(initState: T) : MvLogic<T> {
     private val stateFlow = MutableStateFlow(initState)
 
     override val state: T get() = stateFlow.value
 
-    override suspend fun StateLogic<T>.update(reducer: suspend T.() -> T) {
+    override suspend fun MvLogic<T>.update(reducer: suspend T.() -> T) {
         val to = reducer(stateFlow.value)
         stateFlow.value = to
     }

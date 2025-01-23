@@ -1,5 +1,6 @@
 package xyz.icode.mvs
 
+import xyz.icode.mvs.internal.MvLogicImpl
 import kotlin.reflect.KProperty1
 
 interface MvState
@@ -12,13 +13,13 @@ interface MvState
  * manage state update and dispatch updates to observers of [onAny]
  * use [onAny] to observe state or state's property changes
  */
-interface StateLogic<T : MvState> {
+interface MvLogic<T : MvState> {
     val state: T // read only
 
     /**
      * Restricted to be used only within subclasses
      */
-    suspend fun StateLogic<T>.update(reducer: suspend T.() -> T)
+    suspend fun MvLogic<T>.update(reducer: suspend T.() -> T)
 
     /**
      * property change will trigger [onUpdate]
@@ -54,4 +55,4 @@ interface StateLogic<T : MvState> {
     suspend fun onAny(onUpdate: suspend (T) -> Unit)
 }
 
-fun <T : MvState> stateProducer(initState: T): StateLogic<T> = StateLogicImpl(initState)
+fun <T : MvState> stateProducer(initState: T): MvLogic<T> = MvLogicImpl(initState)
