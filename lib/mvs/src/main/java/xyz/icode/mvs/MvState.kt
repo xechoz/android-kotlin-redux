@@ -7,18 +7,18 @@ interface MvState
 // a state data class, observable properties
 
 /**
- * A producer of [MvState]
+ * Logic of [MvState], is like a ViewModel of MVVM
  *
  * manage state update and dispatch updates to observers of [onAny]
  * use [onAny] to observe state or state's property changes
  */
-interface StateProducer<T : MvState> {
+interface StateLogic<T : MvState> {
     val state: T // read only
 
     /**
      * Restricted to be used only within subclasses
      */
-    suspend fun StateProducer<T>.update(reducer: suspend T.() -> T)
+    suspend fun StateLogic<T>.update(reducer: suspend T.() -> T)
 
     /**
      * property change will trigger [onUpdate]
@@ -54,4 +54,4 @@ interface StateProducer<T : MvState> {
     suspend fun onAny(onUpdate: suspend (T) -> Unit)
 }
 
-fun <T : MvState> stateProducer(initState: T): StateProducer<T> = StateProducerImpl(initState)
+fun <T : MvState> stateProducer(initState: T): StateLogic<T> = StateLogicImpl(initState)

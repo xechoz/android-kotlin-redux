@@ -8,12 +8,12 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlin.reflect.KProperty1
 
-internal class StateProducerImpl<T : MvState>(initState: T) : StateProducer<T> {
+internal class StateLogicImpl<T : MvState>(initState: T) : StateLogic<T> {
     private val stateFlow = MutableStateFlow(initState)
 
     override val state: T get() = stateFlow.value
 
-    override suspend fun StateProducer<T>.update(reducer: suspend T.() -> T) {
+    override suspend fun StateLogic<T>.update(reducer: suspend T.() -> T) {
         val to = reducer(stateFlow.value)
         stateFlow.value = to
     }
