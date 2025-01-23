@@ -1,6 +1,5 @@
 package xyz.icode.mvs
 
-import kotlinx.coroutines.flow.StateFlow
 import kotlin.reflect.KProperty1
 
 interface MvState
@@ -8,17 +7,51 @@ interface MvState
 // a state data class, observable properties
 
 /**
- * update state, return new state
+ * A producer of [MvState]
+ *
+ * manage state update and dispatch updates to observers of [onAny]
+ * use [onAny] to observe state or state's property changes
  */
-interface StateProducer<T: MvState> {
-    val state: StateFlow<T> // read only
+interface StateProducer<T : MvState> {
+    val state: T // read only
 
     /**
-     * 限制只能在 子类内部使用
+     * Restricted to be used only within subclasses
      */
-    fun StateProducer<T>.update(reducer:T.()->T)
+    suspend fun StateProducer<T>.update(reducer: suspend T.() -> T)
 
-    suspend fun<V> onUpdate(property: KProperty1<T, V>, observer: suspend (V) -> Unit)
+    /**
+     * property change will trigger [onUpdate]
+     * usage: fooProducer.onAny(FooState::bar) { ... }
+     */
+    suspend fun <V> onAny(property: KProperty1<T, V>, onUpdate: suspend (V) -> Unit)
+
+    /**
+     * any property change will trigger [onUpdate]
+     * usage: fooProducer.onAny(FooState::bar, FooState::baz) { a, b -> ... }
+     */
+    suspend fun <A, B> onAny(
+        property: KProperty1<T, A>,
+        property2: KProperty1<T, B>,
+        onUpdate: suspend (A, B) -> Unit
+    )
+
+    /**
+     * any property change will trigger [onUpdate]
+     * usage: fooProducer.onAny(FooState::bar, FooState::baz, FooState::qux) { a, b, c -> ... }
+     */
+    suspend fun <A, B, C> onAny(
+        property: KProperty1<T, A>,
+        property2: KProperty1<T, B>,
+        property3: KProperty1<T, C>,
+        onUpdate: suspend (A, B, C) -> Unit
+    )
+
+    /**
+     * any property of [state] changed will trigger [onUpdate]
+     * usage: fooProducer.onAny { state -> ... }
+     */
+    suspend fun onAny(onUpdate: suspend (T) -> Unit)
 }
 
-fun <T: MvState> stateProducer(initState: T): StateProducer<T> = StateProducerImpl(initState)
+fun <T : MvState> stateProducer(initState: T): StateProducer<T> = StateProducerImpl(initState)
