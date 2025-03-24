@@ -27,24 +27,24 @@ private const val TAG = "TodoMain"
 @Composable
 fun TodoMain(modifier: Modifier = Modifier) {
     val scope = rememberCoroutineScope()
-    val model = remember { TodoLogicMv() }
+    val model = remember { TodoRepo() }
     val todoRows = remember { mutableStateOf(emptyList<TodoRow>()) }
     val context = LocalContext.current
 
     LaunchedEffect(key1 = todoRows) {
         scope.launch {
-            model.onAny(TodoState::todos) {
+            model.onEach(TodoState::todos) {
                 Log.d(TAG, "onUpdate todos: $it")
                 todoRows.value = it
             }
 
-            model.onAny {
+            model.onEach {
                 Log.d(TAG, "onUpdate state: $it")
             }
         }
 
         scope.launch {
-            model.onAny {
+            model.onEach {
                 Log.d(TAG, "onUpdate state size: ${it.todos.size}")
 
                 if (it.todos.size >= 10) {
@@ -69,7 +69,7 @@ fun TodoMain(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun TodoAdder(scope: CoroutineScope, model: TodoLogicMv) {
+private fun TodoAdder(scope: CoroutineScope, model: TodoRepo) {
     Row(modifier = Modifier.fillMaxWidth()) {
         Button(onClick = {
             scope.launch {

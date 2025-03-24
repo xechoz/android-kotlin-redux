@@ -4,12 +4,11 @@ import android.util.Log
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import xyz.icode.mvs.MvLogic
-import xyz.icode.mvs.stateProducer
+import xyz.icode.mvs.RxRepo
 
-private const val TAG = "TodoViewModel"
+private const val TAG = "TodoRepo"
 
-class TodoLogicMv : MvLogic<TodoState> by stateProducer(initState = TodoState()) {
+class TodoRepo : RxRepo<TodoState> by RxRepo(initState = TodoState()) {
     private val scope = MainScope()
 
     init {
@@ -18,17 +17,15 @@ class TodoLogicMv : MvLogic<TodoState> by stateProducer(initState = TodoState())
                 delay(100L * i)
                 addTodo(title = "Todo $i")
             }
-        }
 
-        scope.launch {
-            onAny {
+            onEach {
                 Log.d(TAG, "onUpdate state: $it")
             }
         }
     }
 
-    suspend fun addTodo(title: String) {
-        update {
+    fun addTodo(title: String) {
+        setState {
             copy(todos = todos + TodoRow(title = title))
         }
     }
