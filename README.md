@@ -1,30 +1,32 @@
+**English** | [中文](README.zh.md)
+
 # android-kotlin-redux
 
 https://github.com/airbnb/mavericks
 
 https://redux.js.org/
 
-并非 RxJava，基于 Kotlin Coroutines Flow 实现的精简 Redux。
+Not RxJava — a minimal Redux built on Kotlin Coroutines Flow.
 
-完整介绍见博客：[Redux-for-Android](https://xechoz.github.io/2025/03/23/Redux-for-Android/)
+Read the full introduction (Chinese): [Redux-for-Android](https://xechoz.github.io/2025/03/23/Redux-for-Android/)
 
-## 基础概念
+## Concepts
 
-GUI 开发通常有 3 个角色：
+A GUI app usually has 3 roles:
 
-1. **state**：描述数据状态，任意 immutable data class（需实现 `RxState` 标记接口）
-2. **repo**：对应 Redux 的 action，负责存储、分发、更新 state
-3. **view**：消费 state，触发 repo 方法
+1. **state**: describes the data, any immutable data class (must implement the `RxState` marker interface)
+2. **repo**: the Redux equivalent of an action — stores, dispatches and updates state
+3. **view**: consumes state and triggers repo methods
 
-## 接入
+## Setup
 
 ```
 implementation(project(":lib:mvs"))
 ```
 
-minSdk 26，依赖 Kotlin Coroutines。
+minSdk 26, depends on Kotlin Coroutines.
 
-## 使用 Demo
+## Usage Demo
 
 ```kotlin
 // state
@@ -57,7 +59,7 @@ class CounterView {
     }
 }
 
-// 结合 ViewModel 使用
+// with ViewModel
 class FooViewModel : ViewModel(),
     RxRepo<FooState> by RxRepo(initState = FooState()) {
 
@@ -69,21 +71,21 @@ class FooViewModel : ViewModel(),
 }
 ```
 
-## API 一览
+## API
 
-| 成员 | 说明 |
+| Member | Description |
 | --- | --- |
-| `val state: State` | 同步读取当前 state |
-| `fun RxRepo<State>.setState(reducer: State.() -> State)` | 更新 state，reducer 以旧 state 为 receiver 返回新 state |
-| `fun asFlow(): Flow<State>` | 将完整 state 作为 Flow 暴露 |
-| `suspend fun onEach(action: (State) -> Unit)` | 监听完整 state |
-| `suspend fun <A : Any> onEach(property: KProperty1<State, A>, action: (A) -> Unit)` | 监听单个属性变化 |
-| `suspend fun <A : Any> onEach(property: KProperty1<State, A>): Flow<A>` | 将属性暴露为 Flow，便于 combine 组合 |
-| `fun <State : RxState> RxRepo(initState: State): RxRepo<State>` | 创建 repo 的工厂函数 |
+| `val state: State` | Synchronously read the current state |
+| `fun RxRepo<State>.setState(reducer: State.() -> State)` | Update state; the reducer receives the old state as receiver and returns the new state |
+| `fun asFlow(): Flow<State>` | Expose the whole state as a Flow |
+| `suspend fun onEach(action: (State) -> Unit)` | Observe the whole state |
+| `suspend fun <A : Any> onEach(property: KProperty1<State, A>, action: (A) -> Unit)` | Observe a single property |
+| `suspend fun <A : Any> onEach(property: KProperty1<State, A>): Flow<A>` | Expose a property as a Flow, ready to be combined |
+| `fun <State : RxState> RxRepo(initState: State): RxRepo<State>` | Factory function to create a repo |
 
-说明：
+Notes:
 
-- `setState` 声明为 `RxRepo` 的扩展成员函数，只能在 repo 实现类或其扩展函数中调用，从而限制外部直接改 state。通过扩展函数为 repo 添加逻辑：
+- `setState` is declared as an extension member of `RxRepo`, so it can only be called from a repo implementation or its extension functions, preventing external mutation. Add logic to a repo via extension functions:
 
   ```kotlin
   fun TodoRepo.remove(todoRow: TodoRow) {
@@ -93,10 +95,10 @@ class FooViewModel : ViewModel(),
   }
   ```
 
-- `onEach` 的订阅生命周期交给调用方的协程作用域管理：在 `scope.launch { }` 中调用，`scope.cancel()` 即停止监听。
-- 若 `onEach` 不能满足需求（如组合多个属性），使用 `asFlow()` 自行处理。
+- The subscription lifetime of `onEach` is managed by the caller's coroutine scope: call it inside `scope.launch { }`; `scope.cancel()` stops observing.
+- If `onEach` is not enough (e.g. combining multiple properties), use `asFlow()` instead.
 
-## 更多示例
+## More examples
 
-- 本仓库 `app` 模块的 Todo 示例：[Todo.kt](app/src/main/java/xyz/icode/lib/todo/Todo.kt)、[Todo.Repo.kt](app/src/main/java/xyz/icode/lib/todo/Todo.Repo.kt)、[Todo.Ui.kt](app/src/main/java/xyz/icode/lib/todo/Todo.Ui.kt)
-- 博客：[Redux-for-Android](https://xechoz.github.io/2025/03/23/Redux-for-Android/)
+- The Todo sample in the `app` module: [Todo.kt](app/src/main/java/xyz/icode/lib/todo/Todo.kt), [Todo.Repo.kt](app/src/main/java/xyz/icode/lib/todo/Todo.Repo.kt), [Todo.Ui.kt](app/src/main/java/xyz/icode/lib/todo/Todo.Ui.kt)
+- Blog (Chinese): [Redux-for-Android](https://xechoz.github.io/2025/03/23/Redux-for-Android/)
