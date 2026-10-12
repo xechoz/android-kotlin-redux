@@ -20,11 +20,13 @@ GUI 开发通常有 3 个角色：
 
 ## 接入
 
-```
-implementation(project(":lib:mvs"))
+```kotlin
+implementation("io.github.xechoz:mvs:1.0.0")
 ```
 
 minSdk 26，依赖 Kotlin Coroutines。
+
+在本仓库内开发时改用 `implementation(project(":lib:mvs"))`。
 
 ## 使用 Demo
 

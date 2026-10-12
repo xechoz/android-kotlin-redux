@@ -20,11 +20,13 @@ A GUI app usually has 3 roles:
 
 ## Setup
 
-```
-implementation(project(":lib:mvs"))
+```kotlin
+implementation("io.github.xechoz:mvs:1.0.0")
 ```
 
 minSdk 26, depends on Kotlin Coroutines.
+
+For development inside this repository, use `implementation(project(":lib:mvs"))` instead.
 
 ## Usage Demo
 
