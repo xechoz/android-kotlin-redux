@@ -21,10 +21,10 @@ A GUI app usually has 3 roles:
 ## Setup
 
 ```kotlin
-implementation("io.github.xechoz:mvs:1.0.0")
+implementation("io.github.xechoz:mvs:1.1.0")
 ```
 
-minSdk 26, depends on Kotlin Coroutines.
+Kotlin Multiplatform library targeting Android and JVM (`mvs-android` / `mvs-jvm` are resolved automatically via Gradle module metadata); depends on Kotlin Coroutines. Android minSdk 26.
 
 For development inside this repository, use `implementation(project(":lib:mvs"))` instead.
 

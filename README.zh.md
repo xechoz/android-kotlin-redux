@@ -21,10 +21,10 @@ GUI 开发通常有 3 个角色：
 ## 接入
 
 ```kotlin
-implementation("io.github.xechoz:mvs:1.0.0")
+implementation("io.github.xechoz:mvs:1.1.0")
 ```
 
-minSdk 26，依赖 Kotlin Coroutines。
+Kotlin Multiplatform 库，支持 Android 与 JVM 目标（通过 Gradle module metadata 自动解析 `mvs-android` / `mvs-jvm`）；依赖 Kotlin Coroutines，Android minSdk 26。
 
 在本仓库内开发时改用 `implementation(project(":lib:mvs"))`。
 
